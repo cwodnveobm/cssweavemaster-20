@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 
 const HennaMoments = () => {
   const imageUrls = [
@@ -28,14 +27,14 @@ const HennaMoments = () => {
           </a>
         </p>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
           {imageUrls.map((url, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="aspect-square relative overflow-hidden rounded-lg group"
+              className="flex-none w-[250px] aspect-square relative overflow-hidden rounded-lg group"
             >
               <img
                 src={url}
