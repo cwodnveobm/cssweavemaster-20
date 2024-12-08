@@ -6,7 +6,6 @@ import { useCart } from '../../context/CartContext';
 
 const ProductCard = ({ product }) => {
   const { addToCart, savedItems, saveForLater } = useCart();
-
   const isSaved = savedItems.some(item => item.id === product.id);
 
   const handleSaveForLater = () => {
@@ -20,21 +19,23 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div className="aspect-square overflow-hidden">
+    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col h-[450px]">
+      <div className="relative aspect-square w-full overflow-hidden">
         <img 
           src={product.image} 
           alt={product.name} 
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          loading="lazy"
+          decoding="async"
         />
       </div>
-      <div className="p-6">
+      <div className="p-4 flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-lg font-semibold">{product.name}</h3>
-          <span className="text-green-800 font-bold">₹{product.price}</span>
+          <h3 className="text-lg font-semibold text-green-800 line-clamp-2">{product.name}</h3>
+          <span className="text-green-800 font-bold whitespace-nowrap ml-2">₹{product.price}</span>
         </div>
-        <p className="text-gray-600 text-sm mb-4">{product.description}</p>
-        <div className="flex gap-2">
+        <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">{product.description}</p>
+        <div className="flex gap-2 mt-auto">
           <Button 
             variant="outline"
             onClick={handleSaveForLater}
