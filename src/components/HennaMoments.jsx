@@ -8,9 +8,13 @@ const HennaMoments = () => {
   useEffect(() => {
     console.log('HennaMoments component mounted');
     let animationFrameId;
+    let timeoutId;
     
     const startAutoScroll = async () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current) {
+        console.log('Container ref not ready');
+        return;
+      }
       
       const scrollWidth = containerRef.current.scrollWidth;
       const clientWidth = containerRef.current.clientWidth;
@@ -32,11 +36,12 @@ const HennaMoments = () => {
 
     const initAnimation = () => {
       console.log('Starting scroll animation');
-      animationFrameId = requestAnimationFrame(startAutoScroll);
+      timeoutId = setTimeout(() => {
+        animationFrameId = requestAnimationFrame(startAutoScroll);
+      }, 100);
     };
 
-    // Start animation with a small delay to ensure component is mounted
-    const timeoutId = setTimeout(initAnimation, 100);
+    initAnimation();
 
     return () => {
       console.log('Cleaning up HennaMoments animations');
