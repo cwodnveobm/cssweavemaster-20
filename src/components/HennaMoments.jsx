@@ -21,7 +21,7 @@ const HennaMoments = () => {
 
       const scrollWidth = container.scrollWidth - container.clientWidth;
       
-      while (true) {
+      const autoScrollAnimation = async () => {
         await controls.start({
           x: -scrollWidth,
           transition: { duration: 20, ease: "linear" }
@@ -31,7 +31,12 @@ const HennaMoments = () => {
           x: 0,
           transition: { duration: 0 }
         });
-      }
+
+        // Recursive call to create continuous animation
+        autoScrollAnimation();
+      };
+
+      autoScrollAnimation();
     };
 
     startAutoScroll();
