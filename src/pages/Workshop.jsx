@@ -21,31 +21,13 @@ const Workshop = () => {
   };
 
   const handleDownload = () => {
-    // Replace this URL with your actual brochure PDF URL
-    const brochureUrl = '/workshop-brochure.pdf';
-    
-    fetch(brochureUrl)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.blob();
-      })
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'workshop-brochure.pdf';
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        toast.success("Brochure downloaded successfully!");
-      })
-      .catch(error => {
-        console.error('Error downloading the brochure:', error);
-        toast.error("Failed to download brochure. Please try again later.");
-      });
+    const link = document.createElement('a');
+    link.href = '/index.pdf';
+    link.download = 'workshop-brochure.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Brochure downloaded successfully!");
   };
 
   return (
