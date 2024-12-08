@@ -15,37 +15,58 @@ const HennaMoments = () => {
   ];
 
   useEffect(() => {
-    const startAutoScroll = async () => {
-      const container = scrollRef.current;
-      if (!container) return;
+    console.log('HennaMoments component mounted');
+    const container = scrollRef.current;
+    if (!container) {
+      console.log('Container ref not found');
+      return;
+    }
 
-      const scrollWidth = container.scrollWidth - container.clientWidth;
-      
-      const autoScrollAnimation = async () => {
+    const scrollWidth = container.scrollWidth - container.clientWidth;
+    console.log('Scroll width calculated:', scrollWidth);
+
+    let isAnimating = true;
+
+    const autoScrollAnimation = async () => {
+      if (!isAnimating) return;
+
+      try {
+        console.log('Starting scroll animation');
         await controls.start({
           x: -scrollWidth,
           transition: { duration: 20, ease: "linear" }
         });
-        
+
+        if (!isAnimating) return;
+
+        console.log('Resetting scroll position');
         await controls.start({
           x: 0,
           transition: { duration: 0 }
         });
 
-        // Recursive call to create continuous animation
-        autoScrollAnimation();
-      };
-
-      autoScrollAnimation();
+        if (isAnimating) {
+          requestAnimationFrame(() => autoScrollAnimation());
+        }
+      } catch (error) {
+        console.error('Animation error:', error);
+      }
     };
 
-    startAutoScroll();
+    autoScrollAnimation();
+
+    return () => {
+      console.log('Cleaning up animation');
+      isAnimating = false;
+    };
   }, [controls]);
 
   return (
     <section className="py-12 sm:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-green-800 mb-4">Henna Moments</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-green-800 mb-4">
+          Henna Moments
+        </h2>
         <p className="text-center mb-8 sm:mb-12 text-sm sm:text-base text-gray-600">
           Follow our instagram page{' '}
           <a 
