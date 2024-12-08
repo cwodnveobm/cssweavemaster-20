@@ -35,9 +35,18 @@ const HennaMoments = () => {
     };
 
     const initAnimation = () => {
+      if (!controls || typeof controls.start !== 'function') {
+        console.error('Animation controls not properly initialized');
+        return;
+      }
+      
       console.log('Starting scroll animation');
       timeoutId = setTimeout(() => {
-        animationFrameId = requestAnimationFrame(startAutoScroll);
+        animationFrameId = requestAnimationFrame(() => {
+          startAutoScroll().catch(error => {
+            console.error('Failed to start auto scroll:', error);
+          });
+        });
       }, 100);
     };
 
