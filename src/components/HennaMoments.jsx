@@ -8,7 +8,6 @@ const HennaMoments = () => {
   useEffect(() => {
     console.log('HennaMoments component mounted');
     let animationFrameId;
-    let timeoutId;
     
     const startAutoScroll = async () => {
       if (!containerRef.current) {
@@ -18,15 +17,27 @@ const HennaMoments = () => {
       
       const scrollWidth = containerRef.current.scrollWidth;
       const clientWidth = containerRef.current.clientWidth;
-      console.log('Scroll width calculated:', scrollWidth);
+      const scrollDistance = scrollWidth - clientWidth;
       
+      console.log('Scroll width:', scrollWidth, 'Client width:', clientWidth, 'Scroll distance:', scrollDistance);
+      
+      if (scrollDistance <= 0) {
+        console.log('No need to scroll - content fits in container');
+        return;
+      }
+
       try {
+        // Reset position
+        await controls.start({ x: 0 });
+        
+        // Start continuous scroll
         await controls.start({
-          x: [0, -(scrollWidth - clientWidth)],
+          x: -scrollDistance,
           transition: {
             duration: 20,
             ease: "linear",
             repeat: Infinity,
+            repeatType: "reverse"
           }
         });
       } catch (error) {
@@ -34,28 +45,18 @@ const HennaMoments = () => {
       }
     };
 
-    const initAnimation = () => {
-      if (!controls || typeof controls.start !== 'function') {
-        console.error('Animation controls not properly initialized');
-        return;
-      }
-      
-      console.log('Starting scroll animation');
-      timeoutId = setTimeout(() => {
-        animationFrameId = requestAnimationFrame(() => {
-          startAutoScroll().catch(error => {
-            console.error('Failed to start auto scroll:', error);
-          });
-        });
-      }, 100);
-    };
+    // Start animation after a short delay to ensure proper initialization
+    const timeoutId = setTimeout(() => {
+      animationFrameId = requestAnimationFrame(startAutoScroll);
+    }, 500);
 
-    initAnimation();
-
+    // Cleanup function
     return () => {
       console.log('Cleaning up HennaMoments animations');
-      if (timeoutId) clearTimeout(timeoutId);
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      clearTimeout(timeoutId);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
       controls.stop();
     };
   }, [controls]);
@@ -69,19 +70,61 @@ const HennaMoments = () => {
       >
         {/* Image items */}
         <div className="flex-shrink-0">
-          <img src="/henna1.jpg" alt="Henna Design 1" className="w-64 h-64 object-cover rounded-lg" />
+          <img 
+            src="/henna1.jpg" 
+            alt="Henna Design 1" 
+            className="w-64 h-64 object-cover rounded-lg shadow-md" 
+            loading="lazy"
+          />
         </div>
         <div className="flex-shrink-0">
-          <img src="/henna2.jpg" alt="Henna Design 2" className="w-64 h-64 object-cover rounded-lg" />
+          <img 
+            src="/henna2.jpg" 
+            alt="Henna Design 2" 
+            className="w-64 h-64 object-cover rounded-lg shadow-md" 
+            loading="lazy"
+          />
         </div>
         <div className="flex-shrink-0">
-          <img src="/henna3.jpg" alt="Henna Design 3" className="w-64 h-64 object-cover rounded-lg" />
+          <img 
+            src="/henna3.jpg" 
+            alt="Henna Design 3" 
+            className="w-64 h-64 object-cover rounded-lg shadow-md" 
+            loading="lazy"
+          />
         </div>
         <div className="flex-shrink-0">
-          <img src="/henna4.jpg" alt="Henna Design 4" className="w-64 h-64 object-cover rounded-lg" />
+          <img 
+            src="/henna4.jpg" 
+            alt="Henna Design 4" 
+            className="w-64 h-64 object-cover rounded-lg shadow-md" 
+            loading="lazy"
+          />
         </div>
         <div className="flex-shrink-0">
-          <img src="/henna5.jpg" alt="Henna Design 5" className="w-64 h-64 object-cover rounded-lg" />
+          <img 
+            src="/henna5.jpg" 
+            alt="Henna Design 5" 
+            className="w-64 h-64 object-cover rounded-lg shadow-md" 
+            loading="lazy"
+          />
+        </div>
+        {/* Duplicate first few images to create seamless loop */}
+        <div className="flex-shrink-0">
+          <img 
+            src="/henna1.jpg" 
+            alt="Henna Design 1" 
+            className="w-64 h-64 object-cover rounded-lg shadow-md" 
+            loading="lazy"
+          />
+        </div>
+        <div className="flex-shrink-0">
+          <img 
+            src="/henna2.jpg" 
+            alt="Henna Design 2" 
+            className="w-64 h-64 object-cover rounded-lg shadow-md" 
+            loading="lazy"
+          />
         </div>
       </motion.div>
     </div>
