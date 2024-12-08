@@ -7,14 +7,15 @@ const HeroSection = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { 
-      loop: true,  // Ensure looping is explicitly set
-      skipSnaps: false  // Ensure all slides are considered
+      loop: true,
+      skipSnaps: false,
+      dragFree: false
     }, 
     [
       Autoplay({ 
-        delay: 3000,  // Slide every 3 seconds
-        stopOnInteraction: false,  // Continue auto-scrolling even after user interaction
-        playOnInit: true  // Start autoplay immediately
+        delay: 5000,
+        stopOnInteraction: false,
+        playOnInit: true
       })
     ]
   );
@@ -37,8 +38,8 @@ const HeroSection = () => {
   const scrollNext = () => emblaApi && emblaApi.scrollNext();
 
   return (
-    <section className="relative h-[250px] sm:h-[400px] md:h-[500px] lg:h-[570px] w-full overflow-hidden">
-      <div className="relative h-full group touch-pan-y">
+    <section className="relative w-full overflow-hidden">
+      <div className="relative h-[250px] sm:h-[400px] md:h-[500px] lg:h-[570px] group">
         <div className="embla h-full" ref={emblaRef}>
           <div className="embla__container h-full flex">
             {images.map((image, index) => (
@@ -73,6 +74,21 @@ const HeroSection = () => {
         >
           <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6 text-green-800" />
         </button>
+
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              className={`w-2 h-2 rounded-full transition-all ${
+                index === selectedIndex 
+                  ? 'bg-white scale-125' 
+                  : 'bg-white/50 hover:bg-white/75'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+              onClick={() => emblaApi?.scrollTo(index)}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

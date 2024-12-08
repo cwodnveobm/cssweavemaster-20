@@ -12,8 +12,8 @@ import 'react-whatsapp-widget/dist/index.css';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      cacheTime: 1000 * 60 * 30, // 30 minutes
+      staleTime: 1000 * 60 * 5,
+      cacheTime: 1000 * 60 * 30,
       retry: 1,
       suspense: true,
       useErrorBoundary: true,
@@ -75,34 +75,37 @@ const App = () => {
               }}
             />
             <Suspense fallback={
-              <div className="flex items-center justify-center h-screen bg-white">
+              <div className="flex items-center justify-center min-h-screen bg-white">
                 <LoadingSpinner size="large" />
               </div>
             }>
               <Router>
                 <div className="flex flex-col min-h-screen bg-white">
                   <Header />
-                  <main className="flex-grow container mx-auto px-4 py-8 w-full max-w-7xl">
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/shop" element={<Shop />} />
-                      <Route path="/services" element={<Services />} />
-                      <Route path="/workshop" element={<Workshop />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/cart" element={<Cart />} />
-                      <Route path="/saved" element={<SavedItems />} />
-                      <Route path="/search" element={<SearchResults />} />
-                      <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-                      <Route path="/cancellation-and-refund" element={<CancellationAndRefund />} />
-                      <Route path="/shipping-and-privacy" element={<ShippingAndPrivacy />} />
-                    </Routes>
+                  <main className="flex-grow w-full">
+                    <div className="container mx-auto px-4 py-8 max-w-7xl">
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/shop" element={<Shop />} />
+                        <Route path="/services" element={<Services />} />
+                        <Route path="/workshop" element={<Workshop />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/cart" element={<Cart />} />
+                        <Route path="/saved" element={<SavedItems />} />
+                        <Route path="/search" element={<SearchResults />} />
+                        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+                        <Route path="/cancellation-and-refund" element={<CancellationAndRefund />} />
+                        <Route path="/shipping-and-privacy" element={<ShippingAndPrivacy />} />
+                      </Routes>
+                    </div>
                   </main>
                   <Footer />
                   <WhatsAppWidget 
                     phoneNumber="+918086647124"
                     companyName="Henna by Fathima"
                     message="Hello! How can we help you?"
+                    className="!bottom-4 !right-4"
                   />
                 </div>
               </Router>

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Heart, ShoppingCart, Menu } from 'lucide-react';
+import { Search, Heart, ShoppingCart, Menu, X } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useCart } from '../context/CartContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,8 +17,11 @@ const Header = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
-    setIsMobileSearchOpen(false);
+    if (searchTerm.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+      setIsMobileSearchOpen(false);
+      setSearchTerm('');
+    }
   };
 
   useEffect(() => {
@@ -48,11 +51,11 @@ const Header = () => {
       isScrolled ? 'shadow-md' : ''
     }`}>
       <div className="w-full">
-        <div className="w-full py-2 text-center text-xs sm:text-sm" style={{ backgroundColor: '#FCEBD0', fontFamily: 'Jacques Francois' }}>
-          <span className="px-2 sm:px-4">WE ARE DELIVERING ACROSS INDIA AND INTERNATIONALLY!</span>
+        <div className="w-full py-2 text-center text-xs sm:text-sm bg-accent">
+          <span className="px-2 sm:px-4 font-heading">WE ARE DELIVERING ACROSS INDIA AND INTERNATIONALLY!</span>
         </div>
         
-        <nav className="container mx-auto px-2 sm:px-4 flex items-center justify-between py-2 sm:py-4" aria-label="Main navigation">
+        <nav className="container mx-auto px-2 sm:px-4 flex items-center justify-between py-2 sm:py-4">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="lg:hidden">
@@ -63,17 +66,18 @@ const Header = () => {
             <SheetContent side="left" className="w-[280px] sm:w-[350px]">
               <nav className="flex flex-col gap-4 mt-8">
                 {navItems.map((item) => (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    className={`block text-base sm:text-lg font-medium transition-colors ${
-                      isActive(item.to)
-                        ? 'text-green-600 font-bold'
-                        : 'text-green-800 hover:text-green-700'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
+                  <SheetClose asChild key={item.to}>
+                    <Link
+                      to={item.to}
+                      className={`block text-base sm:text-lg font-medium transition-colors ${
+                        isActive(item.to)
+                          ? 'text-green-600 font-bold'
+                          : 'text-green-800 hover:text-green-700'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </SheetClose>
                 ))}
               </nav>
             </SheetContent>
@@ -106,24 +110,34 @@ const Header = () => {
           <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
             {isMobileSearchOpen ? (
               <form onSubmit={handleSearch} className="fixed inset-x-0 top-0 bg-white p-2 sm:p-4 z-50 lg:hidden">
-                <div className="relative">
+                <div className="relative flex items-center">
                   <Input
                     type="text"
                     placeholder="Search..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pr-10 text-sm"
+                    className="w-full pr-20 text-sm"
                     autoFocus
                   />
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
-                    size="icon" 
-                    className="absolute right-0 top-0"
-                    onClick={() => setIsMobileSearchOpen(false)}
-                  >
-                    ×
-                  </Button>
+                  <div className="absolute right-0 flex items-center gap-2">
+                    <Button 
+                      type="submit" 
+                      variant="ghost" 
+                      size="icon"
+                      className="h-8 w-8"
+                    >
+                      <Search className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setIsMobileSearchOpen(false)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </form>
             ) : (
@@ -143,7 +157,7 @@ const Header = () => {
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-[180px] xl:w-[250px] text-sm"
+                className="w-[180px] xl:w-[250px] text-sm pr-10"
               />
               <Button type="submit" variant="ghost" size="icon" className="absolute right-0">
                 <Search className="h-4 w-4" />
