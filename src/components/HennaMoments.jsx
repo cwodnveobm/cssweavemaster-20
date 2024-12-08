@@ -1,63 +1,74 @@
-import React, { useRef, useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
+import { motion, useAnimationControls } from 'framer-motion';
 
 const HennaMoments = () => {
   const scrollRef = useRef(null);
-  const controls = useAnimation();
+  const controls = useAnimationControls();
+  const animationRef = useRef(null);
 
-  const imageUrls = [
-    "https://i.ibb.co/C1cFHfH/Whats-App-Image-2024-12-07-at-23-45-16-d0897369.jpg",
-    "https://i.ibb.co/ZhwWrbk/IMG-7475.jpg",
-    "https://i.ibb.co/CVwqgwf/IMG-7693.jpg",
-    "https://i.ibb.co/rZbxbTq/Whats-App-Image-2024-12-07-at-23-00-46-3bf0a56b.jpg",
-    "https://i.ibb.co/svfHh06/90055-FAD-BEFB-4852-AAC5-D9-D07-C2-EC3-DB.jpg",
-    "https://i.ibb.co/5FRJHsf/81b8546f-49ce-45aa-9408-42486dfdcc9a.jpg"
+  const images = [
+    "https://i.postimg.cc/2SGPxtQr/Screenshot-2024-10-13-173602.png",
+    "https://i.postimg.cc/sDddf7fd/Screenshot-2024-10-13-173328.png",
+    "https://i.postimg.cc/MGXrmpZm/Screenshot-2024-10-13-173745.png",
+    "https://i.postimg.cc/bNxXZrdG/Screenshot-2024-10-13-173523.png",
   ];
 
   useEffect(() => {
+    let isMounted = true;
     console.log('HennaMoments component mounted');
-    const container = scrollRef.current;
-    if (!container) {
-      console.log('Container ref not found');
-      return;
-    }
 
-    const scrollWidth = container.scrollWidth - container.clientWidth;
-    console.log('Scroll width calculated:', scrollWidth);
-
-    let isAnimating = true;
-
-    const autoScrollAnimation = async () => {
-      if (!isAnimating) return;
-
-      try {
-        console.log('Starting scroll animation');
-        await controls.start({
-          x: -scrollWidth,
-          transition: { duration: 20, ease: "linear" }
-        });
-
-        if (!isAnimating) return;
-
-        console.log('Resetting scroll position');
-        await controls.start({
-          x: 0,
-          transition: { duration: 0 }
-        });
-
-        if (isAnimating) {
-          requestAnimationFrame(() => autoScrollAnimation());
-        }
-      } catch (error) {
-        console.error('Animation error:', error);
+    const startAnimation = async () => {
+      if (!isMounted) return;
+      
+      const container = scrollRef.current;
+      if (!container) {
+        console.log('Container ref not found');
+        return;
       }
+
+      const scrollWidth = container.scrollWidth - container.clientWidth;
+      console.log('Scroll width calculated:', scrollWidth);
+
+      const animate = async () => {
+        if (!isMounted) return;
+
+        try {
+          console.log('Starting scroll animation');
+          await controls.start({
+            x: -scrollWidth,
+            transition: { duration: 20, ease: "linear" }
+          });
+
+          if (!isMounted) return;
+
+          console.log('Resetting scroll position');
+          await controls.start({
+            x: 0,
+            transition: { duration: 0 }
+          });
+
+          if (isMounted) {
+            animationRef.current = requestAnimationFrame(animate);
+          }
+        } catch (error) {
+          console.error('Animation error:', error);
+        }
+      };
+
+      animationRef.current = requestAnimationFrame(animate);
     };
 
-    autoScrollAnimation();
+    // Start animation after a short delay to ensure component is mounted
+    const timeoutId = setTimeout(startAnimation, 100);
 
     return () => {
       console.log('Cleaning up animation');
-      isAnimating = false;
+      isMounted = false;
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      clearTimeout(timeoutId);
+      controls.stop();
     };
   }, [controls]);
 
@@ -69,40 +80,31 @@ const HennaMoments = () => {
         </h2>
         <p className="text-center mb-8 sm:mb-12 text-sm sm:text-base text-gray-600">
           Follow our instagram page{' '}
-          <a 
-            href="https://www.instagram.com/hennabyfathima__/" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="text-green-800 hover:text-green-600 transition-colors font-semibold"
+          <a
+            href="https://www.instagram.com/hennabyfathima.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-green-800 hover:underline"
           >
-            @hennabyfathima__
-          </a>
+            @hennabyfathima.in
+          </a>{' '}
+          for more updates and designs
         </p>
-        
-        <div ref={scrollRef} className="overflow-hidden">
-          <motion.div 
-            animate={controls}
-            className="flex gap-4"
-          >
-            {imageUrls.map((url, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex-none w-[250px] aspect-square relative overflow-hidden rounded-lg group"
-              >
-                <img
-                  src={url}
-                  alt={`Henna Moment ${index + 1}`}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  loading={index < 2 ? "eager" : "lazy"}
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300" />
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
+
+        <motion.div
+          ref={scrollRef}
+          animate={controls}
+          className="flex gap-4 overflow-hidden"
+        >
+          {[...images, ...images].map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt={`Henna design ${index + 1}`}
+              className="w-64 h-64 object-cover rounded-lg flex-shrink-0"
+            />
+          ))}
+        </motion.div>
       </div>
     </section>
   );
